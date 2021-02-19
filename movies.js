@@ -40,11 +40,12 @@ window.addEventListener('DOMContentLoaded', async function(event) {
     //   <a href="#" class="watched-button block text-center text-white bg-green-500 mt-4 px-4 py-2 rounded">I've watched this!</a>
     // </div>
     // ⬇️ ⬇️ ⬇️
-  
+
     for (let i = 0; i < movies.results.length; i++) {
         let movie = movies.results[i]
         let movieID = movie.id
         let posterURL = movie.poster_path
+        let movieTitle = movie.title
                 
         document.querySelector('.movies').insertAdjacentHTML('beforeend', `
         <div class="mov-${movieID} w-1/5 p-4 text-xl border-2 border-purple-500 w-full">
@@ -70,22 +71,37 @@ window.addEventListener('DOMContentLoaded', async function(event) {
     //   to remove the class if the element already contains it.
     // ⬇️ ⬇️ ⬇️
 
-        document.querySelector(`.mov-${movieID} .watched-button`).addEventListener('click', async function(event) {
-         event.preventDefault()
+    let querySnapshot = await db.collection('watched').get()
+    let watchedMovies = querySnapshot.docs
+    for (let j = 0; j < watchedMovies.length; j++) {
+        let watchedMoviesID = watchedMovies[j].id
+       
+            document.querySelector(`.mov-${movieID} .watched-button`).addEventListener('click', async function(event) {
+            event.preventDefault()
+       
+            let movieRef = await db.collection('watched').doc(`${movieID}`).set({
+                title: movieTitle,
+                status: 'watched'
+            })
 
-         let docRef = await db.collection('watched').doc(`${movieID}`).set({
-            status: 'watched'
-         })
-
-         document.querySelector(`.mov-${movieID}`).classList.add('opacity-20')
-         
-        })
-    
+            document.querySelector(`.mov-${movieID}`).classList.add('opacity-20')
+               
+            })
+           
+            if (watchedMoviesID == movieID) {
+                document.querySelector(`.mov-${movieID}`).classList.add('opacity-20')
+            } else {
+                
+            }
+       
+        }
     }
 
     // ⬆️ ⬆️ ⬆️ 
     // End Step 3
   
+
+    
     // Step 4: 
     // - Properly configure Firebase and Firebase Cloud Firestore
     // - Inside your "watched button" event listener, you wrote in
