@@ -41,6 +41,8 @@ window.addEventListener('DOMContentLoaded', async function(event) {
     // </div>
     // ⬇️ ⬇️ ⬇️
 
+    let docRef = await db.collection('watched').add({})
+
     for (let i = 0; i < movies.results.length; i++) {
         let movie = movies.results[i]
         let movieID = movie.id
